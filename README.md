@@ -81,12 +81,6 @@ https://physionet.org/content/semg/1.0.1/
 - 2000 Hz sampling rate
 - ~5 minutes continuous walking
 
-##  Academic Context
-
-- **Course**: Healthcare Data Analytics (BCSE335L)
-- **Institution**: VIT Chennai
-- **Year**: 2025-26
-
 ##  Key Outputs
 
 1. **compiled_results.csv** - All network metrics for 31 subjects
