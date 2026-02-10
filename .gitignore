@@ -36,9 +36,9 @@ data/
 # Uncomment the next line if you DON'T want to upload results
 # outputs/
 
-# Keep only summary results
-outputs/*/figures/*/*.png
-!outputs/*/summary_plots/
+# # Keep only summary results
+# outputs/*/figures/*/*.png
+# !outputs/*/summary_plots/
 
 # Logs
 *.log
