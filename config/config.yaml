@@ -1,0 +1,202 @@
+# Configuration file for EMG Network Analysis
+# Graph-Based Modeling of Inter-Muscle Coordination Using Surface EMG Signals
+
+# Dataset Configuration
+dataset:
+  name: "Surface EMG During Long-Lasting Ground Walking"
+  source_url: "https://physionet.org/content/semg/1.0.1/"
+  data_dir: "data/"
+  output_dir: "outputs"
+  
+# Signal Processing Parameters
+signal_processing:
+  sampling_rate: 2000  # Hz
+  
+  # Preprocessing filters
+  bandpass_filter:
+    low_cutoff: 20  # Hz
+    high_cutoff: 450  # Hz
+    order: 4
+  
+  envelope_filter:
+    cutoff: 5  # Hz for low-pass envelope
+    order: 4
+  
+  # Notch filter (power line interference)
+  notch_filter:
+    frequency: 50  # Hz (or 60 Hz for US)
+    quality_factor: 30
+    enabled: false
+  
+  # Normalization
+  normalization: "max"  # Options: "max", "rms", "zscore"
+
+# Muscle Configuration
+muscles:
+  channels: 10
+  names: ["LT_TA", "LT_GL", "LT_RF", "LT_HAM", "LT_VL",
+          "RT_TA", "RT_GL", "RT_RF", "RT_HAM", "RT_VL"]
+  full_names:
+    LT_TA: "Left Tibialis Anterior"
+    LT_GL: "Left Gastrocnemius Lateralis"
+    LT_RF: "Left Rectus Femoris"
+    LT_HAM: "Left Hamstring"
+    LT_VL: "Left Vastus Lateralis"
+    RT_TA: "Right Tibialis Anterior"
+    RT_GL: "Right Gastrocnemius Lateralis"
+    RT_RF: "Right Rectus Femoris"
+    RT_HAM: "Right Hamstring"
+    RT_VL: "Right Vastus Lateralis"
+
+# Coherence Analysis
+coherence:
+  method: "welch"
+  nperseg: 512       # Better frequency resolution
+  noverlap: 256      # 50% overlap
+  
+  # Frequency bands (Hz)
+  frequency_bands:
+    delta: [0, 4]
+    theta: [4, 8]
+    alpha: [8, 13]
+    beta: [13, 30]
+    gamma: [30, 50]
+    full: [0, 50]
+  
+  # Coherence threshold for edge creation
+  threshold: 0.1
+  adaptive_threshold: true
+  percentile_threshold: 75  # If adaptive
+
+# Graph Construction
+graph:
+  # Edge weighting strategies
+  weight_method: "coherence"  # Options: "coherence", "correlation", "mutual_info"
+  
+  # Thresholding strategies
+  threshold_method: "adaptive"  # Options: "fixed", "adaptive", "MST_plus"
+  
+  # Network types to construct
+  network_types:
+    - "weighted"
+    - "binary"
+    - "directed"  # Using Granger causality
+  
+  # Preserve connectivity
+  ensure_connected: true
+  minimum_spanning_tree: true
+
+# Network Metrics
+network_metrics:
+  # Global metrics
+  global:
+    - "density"
+    - "global_efficiency"
+    - "local_efficiency"
+    - "clustering_coefficient"
+    - "transitivity"
+    - "assortativity"
+    - "modularity"
+    - "small_worldness"
+    - "average_path_length"
+    - "diameter"
+  
+  # Node-level metrics
+  nodal:
+    - "degree_centrality"
+    - "betweenness_centrality"
+    - "closeness_centrality"
+    - "eigenvector_centrality"
+    - "pagerank"
+    - "clustering"
+    - "local_efficiency"
+  
+  # Community detection
+  community:
+    algorithm: "louvain"  # Options: "louvain", "label_propagation", "girvan_newman"
+    resolution: 1.0
+
+# Statistical Analysis
+statistics:
+  # Comparison tests
+  parametric: false  # Use non-parametric tests
+  alpha: 0.05
+  correction: "fdr_bh"  # False Discovery Rate - Benjamini/Hochberg
+  
+  # Bootstrap parameters
+  bootstrap:
+    n_iterations: 1000
+    confidence_level: 0.95
+
+# Gait Cycle Analysis
+gait:
+  # Event detection
+  foot_switch_threshold: 2.5  # Volts
+  min_stride_duration: 0.5  # seconds
+  max_stride_duration: 2.0  # seconds
+  
+  # Cycle normalization
+  normalize_cycles: true
+  time_normalize: 101  # points (0-100%)
+  
+  # Phases
+  phases:
+    - "stance"
+    - "swing"
+    - "heel_strike"
+    - "toe_off"
+
+# Advanced Features
+advanced_features:
+  # Multiplex network analysis
+  multiplex:
+    enabled: true
+    layers: ["delta", "theta", "alpha", "beta", "gamma"]
+  
+  # Dynamic network analysis
+  temporal:
+    enabled: true
+    window_size: 1.0  # seconds
+    overlap: 0.5  # 50% overlap
+  
+  # Directionality analysis
+  granger_causality:
+    enabled: false
+    max_lag: 50  # samples
+  
+  # Network embedding
+  embedding:
+    method: "node2vec"  # Options: "node2vec", "graph2vec", "spectral"
+    dimensions: 64
+
+# Visualization
+visualization:
+  # Figure settings
+  figure:
+    dpi: 300
+    format: "png"  # Options: "png", "svg", "pdf"
+    style: "seaborn-v0_8-darkgrid"
+  
+  # Network layout
+  layout: "spring"  # Options: "spring", "circular", "kamada_kawai", "spectral"
+  
+  # Color schemes
+  colormap: "viridis"
+  edge_colormap: "coolwarm"
+
+# Output Settings
+output:
+  save_intermediate: true
+  save_graphs: true
+  save_features: true
+  save_visualizations: true
+  
+  # File formats
+  graph_format: "graphml"  # Options: "graphml", "gml", "pickle"
+  features_format: "csv"  # Options: "csv", "json", "pickle"
+
+# Logging
+logging:
+  level: "INFO"  # Options: "DEBUG", "INFO", "WARNING", "ERROR"
+  log_to_file: true
+  log_file: "outputs/logs/analysis.log"
