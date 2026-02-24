@@ -258,11 +258,17 @@ class EMGNetworkPipeline:
                     'n_cycles': results.get('n_cycles', 0),
                     'duration': results['data_info']['duration']
                 }
-                
+
                 # Add global network metrics
                 for key, value in results['network']['global_metrics'].items():
                     flat_results[f'network_{key}'] = value
-                
+
+                # ADD THIS: Add nodal metrics (betweenness centrality, etc.)
+                if 'nodal_metrics' in results['network']:
+                    for muscle, metrics in results['network']['nodal_metrics'].items():
+                        for metric_name, metric_value in metrics.items():
+                            flat_results[f'{metric_name}_{muscle}'] = metric_value
+
                 all_results.append(flat_results)
                 
             except Exception as e:
